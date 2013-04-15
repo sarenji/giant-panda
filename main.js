@@ -8,9 +8,15 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 var objects = {};
+var switches = [];
 
 var loadCounter = 0;
 var loadedCounter = 0;
+var mouse = new THREE.Vector2(),
+    offset = new THREE.Vector3(),
+    INTERSECTED, SELECTED;
+var projector;
+var plane;
 
 
 init();
@@ -27,6 +33,7 @@ function init() {
 
   // scene
 
+  projector = new THREE.Projector();
   scene = new THREE.Scene();
 
   var ambient = new THREE.AmbientLight( 0x101030 );
@@ -39,28 +46,39 @@ function init() {
   // texture
   var texture = new THREE.Texture();
 
-  // var loader = new THREE.ImageLoader();
-  // loader.addEventListener( 'load', function ( event ) {
+  var loader = new THREE.ImageLoader();
+  loader.addEventListener( 'load', function ( event ) {
 
-  //   texture.image = event.content;
-  //   texture.needsUpdate = true;
+    texture.image = event.content;
+    texture.needsUpdate = true;
 
-  // } );
-  // loader.load( 'textures/ash_uvgrid01.jpg' );
+  } );
+  loader.load( 'textures/brian.jpg' );
 
-  // model
-
-  //
+  // plane for clicking
+  plane = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.25, transparent: true, wireframe: true } ) );
+  plane.visible = false;
+  scene.add( plane );
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight );
-  renderer.setFaceCulling(0);
   container.appendChild( renderer.domElement );
 
-  loadModel('control_room', 'obj/control_room.obj');
-  loadModel('switch', 'obj/switch.obj');
+  loadModel('control_room', 'obj/control_room.obj', function( child ) {
+    if ( child instanceof THREE.Mesh ) {
+      child.material.map = texture;
+    }
+  });
+  loadModel('switch', 'obj/switch.obj', function(child) {
+    if ( child instanceof THREE.Mesh ) {
+      switches.push( child );
+    }
+  });
 
   // document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+  document.addEventListener( 'mousemove', onSwitchMouseMove, false );
+  document.addEventListener( 'mousedown', onSwitchMouseDown, false );
+  document.addEventListener( 'mouseup', onSwitchMouseUp, false );
 
   // window.addEventListener( 'resize', onWindowResize, false );
 
@@ -79,7 +97,6 @@ function loadModel(name, modelPath, traverseFunc) {
     objects[name] = object;
     scene.add( object );
     loadedCounter++;
-    console.log(loadedCounter, loadCounter);
     if (loadedCounter == loadCounter) {
       finishLoading();
     }
@@ -89,7 +106,6 @@ function loadModel(name, modelPath, traverseFunc) {
 }
 
 function finishLoading() {
-  console.log("Whaaat");
   objects['switch'].position.x = -1;
 }
 
@@ -109,6 +125,102 @@ function onDocumentMouseMove( event ) {
 
   mouseX = ( event.clientX - windowHalfX ) / 2;
   mouseY = ( event.clientY - windowHalfY ) / 2;
+
+}
+
+function onSwitchMouseMove() {
+  event.preventDefault();
+
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+  var vector = new THREE.Vector3( mouse.x, mouse.y, 0.5 );
+  projector.unprojectVector( vector, camera );
+
+  var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+
+
+  if ( SELECTED ) {
+
+    var intersects = raycaster.intersectObject( plane );
+    var newPoint = intersects[ 0 ].point.sub( offset );
+    newPoint.x = SELECTED.position.x;
+    SELECTED.position.copy( newPoint );
+    return;
+
+  }
+
+
+  var intersects = raycaster.intersectObjects( switches );
+
+  if ( intersects.length > 0 ) {
+
+    if ( INTERSECTED != intersects[ 0 ].object ) {
+
+      if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+
+      INTERSECTED = intersects[ 0 ].object;
+      INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+
+      plane.position.copy( INTERSECTED.position );
+      plane.lookAt( camera.position );
+
+    }
+
+    container.style.cursor = 'pointer';
+
+  } else {
+
+    if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+
+    INTERSECTED = null;
+
+    container.style.cursor = 'auto';
+
+  }
+}
+
+function onSwitchMouseDown( event ) {
+
+  event.preventDefault();
+
+  var vector = new THREE.Vector3( mouse.x, mouse.y, 0.5 );
+  projector.unprojectVector( vector, camera );
+
+  var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+
+  var intersects = raycaster.intersectObjects( switches );
+
+  if ( intersects.length > 0 ) {
+
+    // controls.enabled = false;
+
+    SELECTED = intersects[ 0 ].object;
+
+    var intersects = raycaster.intersectObject( plane );
+    offset.copy( intersects[ 0 ].point ).sub( plane.position );
+
+    container.style.cursor = 'move';
+
+  }
+
+}
+
+function onSwitchMouseUp( event ) {
+
+  event.preventDefault();
+
+  // controls.enabled = true;
+
+  if ( INTERSECTED ) {
+
+    plane.position.copy( INTERSECTED.position );
+
+    SELECTED = null;
+
+  }
+
+  container.style.cursor = 'auto';
 
 }
 
