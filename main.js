@@ -9,6 +9,7 @@ var windowHalfY = window.innerHeight / 2;
 
 var objects = {};
 var switches = [];
+var faders = [];
 
 var loadCounter = 0;
 var loadedCounter = 0;
@@ -21,6 +22,35 @@ var plane;
 
 init();
 animate();
+
+
+function Fader(mesh, maxMovement) {
+  this.mesh = mesh;
+
+  var value = 0;
+  var oldPos = mesh.position.clone();
+  maxMovement = maxMovement || 5;
+
+  this.__defineGetter__("value", function() {
+    return value;
+  });
+
+  this.__defineSetter__("value", function(newValue) {
+    newValue = Math.min(1, newValue);
+    newValue = Math.max(0, newValue);
+    value    = newValue;
+
+    // set coordinates
+    var newPoint = oldPos.clone();
+    newPoint.x = oldPos.x + value * maxMovement;
+    mesh.position.copy( newPoint );
+
+    this.dispatchEvent({ type: "valuechange", content: value });
+  });
+}
+
+THREE.extend( Fader.prototype, THREE.EventDispatcher.prototype );
+
 
 
 function init() {
@@ -72,6 +102,11 @@ function init() {
   loadModel('switch', 'obj/switch.obj', function(child) {
     if ( child instanceof THREE.Mesh ) {
       switches.push( child );
+      var fader = new Fader(child, 5);
+      faders.push( fader );
+      fader.addEventListener( "valuechange", function( event ) {
+        console.log("NEW VALUE: " + event.content);
+      });
     }
   });
 
@@ -128,6 +163,11 @@ function onDocumentMouseMove( event ) {
 
 }
 
+var MAX_SLIDER_Z = 5;
+var MIN_SLIDER_Z = -5;
+var BOARD_HEIGHT = 3;
+var BOARD_LENGTH = 3;
+var SLOPE_START = 3;
 function onSwitchMouseMove() {
   event.preventDefault();
 
@@ -139,15 +179,12 @@ function onSwitchMouseMove() {
 
   var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
 
-
   if ( SELECTED ) {
-
     var intersects = raycaster.intersectObject( plane );
     var newPoint = intersects[ 0 ].point.sub( offset );
-    newPoint.x = SELECTED.position.x;
-    SELECTED.position.copy( newPoint );
+    // TODO: Mathematically confirm this...
+    SELECTED.value = (newPoint.x) / (MAX_SLIDER_Z);
     return;
-
   }
 
 
@@ -189,13 +226,16 @@ function onSwitchMouseDown( event ) {
 
   var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
 
+  // Check for intersection with the fader objects.
   var intersects = raycaster.intersectObjects( switches );
-
   if ( intersects.length > 0 ) {
-
-    // controls.enabled = false;
-
-    SELECTED = intersects[ 0 ].object;
+    // Find associated fader object
+    for (var i = 0; i < faders.length; i++) {
+      if (intersects[0].object == faders[i].mesh) {
+        SELECTED = faders[i];
+        break;
+      }
+    }
 
     var intersects = raycaster.intersectObject( plane );
     offset.copy( intersects[ 0 ].point ).sub( plane.position );
