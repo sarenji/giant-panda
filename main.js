@@ -20,8 +20,8 @@ var projector;
 var plane;
 
 
-init();
-animate();
+// init();
+// animate();
 
 
 function Fader(mesh, maxMovement) {
@@ -285,3 +285,41 @@ function render() {
   renderer.render( scene, camera );
 
 }
+
+function resizeWindow() {
+  resize2DRoom();
+}
+
+function resize2DRoom() {
+  var $image   = $("#room");
+  if ($image.length === 0) return;
+  var width    = $image.width();
+  var height   = $image.height();
+  var wWidth   = $(window).width();
+  var wHeight  = $(window).height();
+  var hRatio   = height / wHeight;
+  var top      = 0;
+  var left     = (wWidth - width / hRatio) / 2;
+
+  $image.attr({
+    width: width / hRatio,
+    height: wHeight
+  });
+  $image.css({
+    top: top + "px",
+    left: left + "px"
+  });
+}
+
+$(function() {
+  var image = new Image();
+  image.id = "room";
+  var $image = $(image);
+  $image.load(function() {
+    $("#background").append($image);
+    resizeWindow();
+  });
+  image.src = "images/room.png";
+});
+
+$(window).on('resize', resizeWindow);
