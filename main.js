@@ -8,8 +8,8 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 var objects = {};
-var switches = [];
 var faders = [];
+var faderMeshes = [];
 var buttons = [];
 var buttonMeshes = [];
 
@@ -190,7 +190,7 @@ function init() {
 function makeSwitch(position, callback) {
   loadModel('switch', 'obj/switch.obj', function(child) {
     if ( child instanceof THREE.Mesh ) {
-      switches.push( child );
+      faderMeshes.push( child );
       child.position.copy( position );
       var fader = new Fader(child, 5);
       faders.push( fader );
@@ -258,35 +258,30 @@ var BOARD_HEIGHT = 3;
 var BOARD_LENGTH = 3;
 var SLOPE_START = 3;
 function onSwitchMouseMove() {
+  var raycaster, intersects, newPoint, maxY, minY;
   event.preventDefault();
 
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
-  var vector = new THREE.Vector3( mouse.x, mouse.y, 0.5 );
-  projector.unprojectVector( vector, camera );
-
-  var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
-  var intersects = raycaster.intersectObject( plane );
-  var newPoint = intersects[ 0 ].point.sub( offset );
+  raycaster = getRaycaster();
+  intersects = raycaster.intersectObject( plane );
+  newPoint = intersects[ 0 ].point.sub( offset );
   $("#debug").text("x: " + newPoint.x + " y: " + newPoint.y);
 
   if ( SELECTED ) {
-    // var intersects = raycaster.intersectObject( plane );
-    // var newPoint = intersects[ 0 ].point.sub( offset );
+    // intersects = raycaster.intersectObject( plane );
+    // newPoint = intersects[ 0 ].point.sub( offset );
     // TODO: Mathematically confirm this...
-    var maxY = 2.359090960572785;
-    var minY = .5128987979644837;
+    maxY = 2.359090960572785;
+    minY = .5128987979644837;
     SELECTED.value = -(newPoint.y - minY) / (maxY - minY);
     return;
   }
 
-
-  var intersects = raycaster.intersectObjects( switches );
+  intersects = raycaster.intersectObjects(faderMeshes);
   if ( intersects.length > 0 ) {
-    if ( INTERSECTED != intersects[ 0 ].object ) {
-      INTERSECTED = intersects[ 0 ].object;
-    }
+    INTERSECTED = intersects[ 0 ].object;
     container.style.cursor = 'pointer';
   } else {
     INTERSECTED = null;
@@ -310,20 +305,15 @@ function onSwitchMouseMove() {
 }
 
 function onSwitchMouseDown( event ) {
-
   event.preventDefault();
 
-  var vector = new THREE.Vector3( mouse.x, mouse.y, 0.5 );
-  projector.unprojectVector( vector, camera );
-
-  var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
-
   // Check for intersection with the fader objects.
-  var intersects = raycaster.intersectObjects( switches );
+  var raycaster = getRaycaster();
+  var intersects = raycaster.intersectObjects(faderMeshes);
   if ( intersects.length > 0 ) {
     // Find associated fader object
     for (var i = 0; i < faders.length; i++) {
-      if (intersects[0].object == faders[i].mesh) {
+      if (intersects[0].object === faders[i].mesh) {
         SELECTED = faders[i];
         break;
       }
@@ -347,16 +337,21 @@ function onSwitchMouseUp( event ) {
   }
 
   if ( INTERSECTED_BUTTON ) {
-    var vector = new THREE.Vector3( mouse.x, mouse.y, 0.5 );
-    projector.unprojectVector( vector, camera );
-    var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
-    var intersects = raycaster.intersectObjects( buttonMeshes );
+    var intersects = getRaycaster().intersectObjects(buttonMeshes);
     if (intersects.length > 0 && INTERSECTED_BUTTON.mesh === intersects[ 0 ].object) {
       INTERSECTED_BUTTON.toggle();
     }
   }
 
   container.style.cursor = 'auto';
+}
+
+function getRaycaster() {
+  var vector, normalized;
+  vector = new THREE.Vector3( mouse.x, mouse.y, 0.5 );
+  projector.unprojectVector( vector, camera );
+  normalized = vector.sub( camera.position ).normalize();
+  return new THREE.Raycaster( camera.position, normalized );
 }
 
 function animate() {
