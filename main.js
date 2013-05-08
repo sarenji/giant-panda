@@ -10,12 +10,14 @@ var windowHalfY = window.innerHeight / 2;
 var objects = {};
 var switches = [];
 var faders = [];
+var buttons = [];
+var buttonMeshes = [];
 
 var loadCounter = 0;
 var loadedCounter = 0;
 var mouse = new THREE.Vector2(),
     offset = new THREE.Vector3(),
-    INTERSECTED, SELECTED;
+    INTERSECTED, SELECTED, INTERSECTED_BUTTON;
 var projector;
 var plane;
 
@@ -51,7 +53,18 @@ function Fader(mesh, maxMovement) {
 
 THREE.extend( Fader.prototype, THREE.EventDispatcher.prototype );
 
+function Button(mesh, callback) {
+  this.mesh = mesh;
+  this.callback = callback;
+  this.pressed = false;
+}
 
+THREE.extend( Button.prototype, THREE.EventDispatcher.prototype );
+
+Button.prototype.toggle = function() {
+  this.pressed = !this.pressed;
+  this.callback.call(this);
+};
 
 function init() {
   container = document.createElement( 'div' );
@@ -100,11 +113,70 @@ function init() {
   //     child.material.map = texture;
   //   }
   // });
-  makeSwitch(new THREE.Vector3(0, 0, -2.2));
-  makeSwitch(new THREE.Vector3(-2, 0, -2.2));
-  makeSwitch(new THREE.Vector3(-4, 0, -2.2));
-  makeSwitch(new THREE.Vector3(2, 0, -2.2));
-  makeSwitch(new THREE.Vector3(4, 0, -2.2));
+  makeSwitch(new THREE.Vector3(0, 0, -2.2), function( event ) {
+    console.log("NEW VALUE: " + event.content);
+  });
+  makeButton(new THREE.Vector3(1, 0, -2), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(1, 0, -1), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(1, 0,  0), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+
+  makeSwitch(new THREE.Vector3(-2, 0, -2.2), function( event ) {
+    console.log("NEW VALUE: " + event.content);
+  });
+  makeButton(new THREE.Vector3(-1, 0, -2), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(-1, 0, -1), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(-1, 0,  0), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+
+  makeSwitch(new THREE.Vector3(-4, 0, -2.2), function( event ) {
+    console.log("NEW VALUE: " + event.content);
+  });
+  makeButton(new THREE.Vector3(-3, 0, -2), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(-3, 0, -1), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(-3, 0,  0), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+
+  makeSwitch(new THREE.Vector3(2, 0, -2.2), function( event ) {
+    console.log("NEW VALUE: " + event.content);
+  });
+  makeButton(new THREE.Vector3(3, 0, -2), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(3, 0, -1), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(3, 0,  0), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+
+  makeSwitch(new THREE.Vector3(4, 0, -2.2), function( event ) {
+    console.log("NEW VALUE: " + event.content);
+  });
+  makeButton(new THREE.Vector3(5, 0, -2), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(5, 0, -1), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
+  makeButton(new THREE.Vector3(5, 0,  0), function() {
+    console.log("BUTTON PRESSED: " + this.pressed);
+  });
 
   // document.addEventListener( 'mousemove', onDocumentMouseMove, false );
   document.addEventListener( 'mousemove', onSwitchMouseMove, false );
@@ -115,18 +187,25 @@ function init() {
 
 }
 
-function makeSwitch(position) {
+function makeSwitch(position, callback) {
   loadModel('switch', 'obj/switch.obj', function(child) {
     if ( child instanceof THREE.Mesh ) {
       switches.push( child );
       child.position.copy( position );
       var fader = new Fader(child, 5);
       faders.push( fader );
-      fader.addEventListener( "valuechange", function( event ) {
-        console.log("NEW VALUE: " + event.content);
-      });
+      fader.addEventListener( "valuechange", callback);
     }
   });
+}
+
+function makeButton(position, callback) {
+  var geom = new THREE.SphereGeometry(.2, 50, 50);
+  var sphere = new THREE.Mesh(geom, new THREE.MeshNormalMaterial({ color: 0xff0000 }));
+  sphere.position.copy(position);
+  buttons.push(new Button(sphere, callback));
+  buttonMeshes.push(sphere);
+  scene.add(sphere);
 }
 
 function loadModel(name, modelPath, traverseFunc) {
@@ -204,27 +283,29 @@ function onSwitchMouseMove() {
 
 
   var intersects = raycaster.intersectObjects( switches );
-
   if ( intersects.length > 0 ) {
-
     if ( INTERSECTED != intersects[ 0 ].object ) {
-
-      if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-
       INTERSECTED = intersects[ 0 ].object;
-      INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
     }
-
     container.style.cursor = 'pointer';
-
   } else {
-
-    if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-
     INTERSECTED = null;
-
     container.style.cursor = 'auto';
+  }
 
+  intersects = raycaster.intersectObjects( buttonMeshes );
+  if ( intersects.length > 0 ) {
+    // Find associated button object
+    for (var i = 0; i < buttons.length; i++) {
+      if (intersects[0].object == buttons[i].mesh) {
+        INTERSECTED_BUTTON = buttons[i];
+        break;
+      }
+    }
+    container.style.cursor = 'pointer';
+  } else {
+    INTERSECTED_BUTTON = null;
+    container.style.cursor = 'auto';
   }
 }
 
@@ -261,19 +342,22 @@ function onSwitchMouseUp( event ) {
 
   event.preventDefault();
 
-  // controls.enabled = true;
-
   if ( INTERSECTED ) {
-
     SELECTED = null;
+  }
 
+  if ( INTERSECTED_BUTTON ) {
+    var vector = new THREE.Vector3( mouse.x, mouse.y, 0.5 );
+    projector.unprojectVector( vector, camera );
+    var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+    var intersects = raycaster.intersectObjects( buttonMeshes );
+    if (intersects.length > 0 && INTERSECTED_BUTTON.mesh === intersects[ 0 ].object) {
+      INTERSECTED_BUTTON.toggle();
+    }
   }
 
   container.style.cursor = 'auto';
-
 }
-
-//
 
 function animate() {
 
