@@ -21,3 +21,19 @@ body {
   top: 0;
   left: 0;
 }
+
+canvas {
+  position: absolute;
+}
+
+#debug {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 200px;
+  height: 150px;
+  background: rgba(0, 0, 0, .5);
+  color: #fff;
+  z-index: 2;
+  /*display: none;*/
+}

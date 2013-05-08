@@ -20,8 +20,8 @@ var projector;
 var plane;
 
 
-// init();
-// animate();
+init();
+animate();
 
 
 function Fader(mesh, maxMovement) {
@@ -42,7 +42,7 @@ function Fader(mesh, maxMovement) {
 
     // set coordinates
     var newPoint = oldPos.clone();
-    newPoint.x = oldPos.x + value * maxMovement;
+    newPoint.z = oldPos.z + value * maxMovement;
     mesh.position.copy( newPoint );
 
     this.dispatchEvent({ type: "valuechange", content: value });
@@ -86,22 +86,40 @@ function init() {
   loader.load( 'textures/brian.jpg' );
 
   // plane for clicking
-  plane = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.25, transparent: true, wireframe: true } ) );
-  plane.visible = false;
+  // plane = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.25, transparent: true, wireframe: true } ) );
+  // plane.visible = false;
+  plane = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x000000, opacity: .5, transparent: false, wireframe: true } ) );
   scene.add( plane );
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight );
   container.appendChild( renderer.domElement );
 
-  loadModel('control_room', 'obj/control_room.obj', function( child ) {
-    if ( child instanceof THREE.Mesh ) {
-      child.material.map = texture;
-    }
-  });
+  // loadModel('control_room', 'obj/control_room.obj', function( child ) {
+  //   if ( child instanceof THREE.Mesh ) {
+  //     child.material.map = texture;
+  //   }
+  // });
+  makeSwitch(new THREE.Vector3(0, 0, -2.2));
+  makeSwitch(new THREE.Vector3(-2, 0, -2.2));
+  makeSwitch(new THREE.Vector3(-4, 0, -2.2));
+  makeSwitch(new THREE.Vector3(2, 0, -2.2));
+  makeSwitch(new THREE.Vector3(4, 0, -2.2));
+
+  // document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+  document.addEventListener( 'mousemove', onSwitchMouseMove, false );
+  document.addEventListener( 'mousedown', onSwitchMouseDown, false );
+  document.addEventListener( 'mouseup', onSwitchMouseUp, false );
+
+  window.addEventListener( 'resize', onWindowResize, false );
+
+}
+
+function makeSwitch(position) {
   loadModel('switch', 'obj/switch.obj', function(child) {
     if ( child instanceof THREE.Mesh ) {
       switches.push( child );
+      child.position.copy( position );
       var fader = new Fader(child, 5);
       faders.push( fader );
       fader.addEventListener( "valuechange", function( event ) {
@@ -109,14 +127,6 @@ function init() {
       });
     }
   });
-
-  // document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-  document.addEventListener( 'mousemove', onSwitchMouseMove, false );
-  document.addEventListener( 'mousedown', onSwitchMouseDown, false );
-  document.addEventListener( 'mouseup', onSwitchMouseUp, false );
-
-  // window.addEventListener( 'resize', onWindowResize, false );
-
 }
 
 function loadModel(name, modelPath, traverseFunc) {
@@ -178,12 +188,17 @@ function onSwitchMouseMove() {
   projector.unprojectVector( vector, camera );
 
   var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+  var intersects = raycaster.intersectObject( plane );
+  var newPoint = intersects[ 0 ].point.sub( offset );
+  $("#debug").text("x: " + newPoint.x + " y: " + newPoint.y);
 
   if ( SELECTED ) {
-    var intersects = raycaster.intersectObject( plane );
-    var newPoint = intersects[ 0 ].point.sub( offset );
+    // var intersects = raycaster.intersectObject( plane );
+    // var newPoint = intersects[ 0 ].point.sub( offset );
     // TODO: Mathematically confirm this...
-    SELECTED.value = (newPoint.x) / (MAX_SLIDER_Z);
+    var maxY = 2.359090960572785;
+    var minY = .5128987979644837;
+    SELECTED.value = -(newPoint.y - minY) / (maxY - minY);
     return;
   }
 
@@ -198,10 +213,6 @@ function onSwitchMouseMove() {
 
       INTERSECTED = intersects[ 0 ].object;
       INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-
-      plane.position.copy( INTERSECTED.position );
-      plane.lookAt( camera.position );
-
     }
 
     container.style.cursor = 'pointer';
@@ -254,8 +265,6 @@ function onSwitchMouseUp( event ) {
 
   if ( INTERSECTED ) {
 
-    plane.position.copy( INTERSECTED.position );
-
     SELECTED = null;
 
   }
@@ -281,6 +290,7 @@ function render() {
   pos.y = 8;
 
   camera.lookAt( pos );
+  plane.lookAt( camera.position );
 
   renderer.render( scene, camera );
 
