@@ -8,9 +8,10 @@ var numberAudioElementsLoaded = 0;
 var trackElements;
 var isWorking = false;
 var freqByteData;
+var speakerImages = [];
 
 // call this to begin. Should not be called until all tracks loaded
-  function init() {
+  function initAudio() {
   try {
     context = new webkitAudioContext(); // make a context for the app
     tuna = new Tuna(context); 
@@ -21,9 +22,11 @@ var freqByteData;
                     document.getElementById("audio4"),
                     document.getElementById("audio5"),
                     document.getElementById("audio6")]; // get the 6 audio tracks
-    initTracks(); 
+    initTracks();
     StartAll();
     isWorking = true;
+    //speakerImages = [document.getElementById("speaker1"),document.getElementById("speaker2")];
+    window.setInterval(gainMeter,50);
   }
   catch(e) {
   	// called when in a non-complient browser or when audio fails to load
@@ -56,7 +59,7 @@ function initTracks(){
       dryLevel: 1.0,
       wetLevel: 0.7,
       level: 1.0,
-      impulse: 'impulses/impulse_rev.wav',
+      impulse: "audioCode/impulses/impulse_rev.wav",
       bypass: 1
     });
 
@@ -87,10 +90,7 @@ function initTracks(){
   processor = context.createJavaScriptNode(2048,1,1);
   masterVolume.connect(analyser);
   analyser.connect(context.destination);
-  processor.onaudioprocess = function(){
-  	gainMeter();
-  	}
-
+  processor.onaudioprocess = gainMeter();
 }
 
 /*
@@ -139,13 +139,13 @@ function togglePhaser(trackId){
 */
 function changeVolume(value,trackId){
  	if (isWorking) {
-  	tracks[trackId].gainNode.gain.value = value;
+  	tracks[trackId].gainNode.gain.value = 1 - value;
   }
 }
 
 function changeMasterVolume(value){
  	if (isWorking) {
-  	masterVolume.gain.value = value;
+  	masterVolume.gain.value = 1 - value;
   }
 }
 
@@ -158,5 +158,14 @@ function gainMeter(){
 		values += freqByteData[i];
 	}
 	average = (values / byteDatalength) * masterVolume.gain.value;
-	console.log(average);
+	//console.log(average);
+	for (var j=0; j<speakerImages.length; j++){
+		var scale = 10+(average/100); // the speaker height here
+		var pos = -1 * scale / 2;
+		speakerImages[j].style.width = scale+"%";
+		speakerImages[j].style.height = scale+"%";
+		speakerImages[j].style.top = pos+"%";
+		speakerImages[j].style.left = pos+"%";
+	}
 	return average;
+}

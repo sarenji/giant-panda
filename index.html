@@ -4,11 +4,59 @@
   <script src="js/jquery.js"></script>
   <script src="js/three.min.js"></script>
   <script src="js/objloader.js"></script>
+  <script src="audioCode/mixer.js"></script>
+  <script src="audioCode/tuna.js" type="text/javascript"></script>
   <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
+	</body>
   <div id="background"></div>
   <script type="text/javascript" src="main.js"></script>
   <div id="debug"></div>
+  
+  <!---audio stuff below-->
+	<audio id="audio1" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/DRUMS.mp3"   preload="auto" autobuffer>
+	</audio>   
+	<audio id="audio2" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/GTR_LEADS.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="audio3" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/KEYS_MIX.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="audio4" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/VOCALS.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="audio5" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/GTR_RHY.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="audio6" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/BASS.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="finalMix" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/FINAL_MIX.mp3" preload="auto" autobuffer>  
+	</audio> 
 </body>
+	<script>
+		var canplay = 0;
+		var isPlaying = false;
+		
+		function myOnCanPlayFunction(){
+			canplay +=1;
+			if ( (canplay*20 >= 120) && (!isPlaying) ){
+				initAudio();
+				isPlaying = true;
+			}
+		}
+
+		function StartAll(soundobj) {
+			if (!isPlaying){
+				var thissound=document.getElementById('audio1');  
+					thissound.play();
+					thissound=document.getElementById('audio2');  
+					thissound.play();
+					thissound=document.getElementById('audio3');  
+					thissound.play();
+					thissound=document.getElementById('audio4');  
+					thissound.play();
+					thissound=document.getElementById('audio5');  
+					thissound.play();
+					thissound=document.getElementById('audio6');  
+					thissound.play();	 
+				}
+		}
+	</script>
 </html>

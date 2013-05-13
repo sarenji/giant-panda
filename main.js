@@ -113,70 +113,98 @@ function init() {
   //     child.material.map = texture;
   //   }
   // });
+  
+  // track 0
   makeSwitch(new THREE.Vector3(0, 0, -2.2), function( event ) {
+	 	changeVolume(event.content, 0);
     console.log("NEW VALUE: " + event.content);
   });
   makeButton(new THREE.Vector3(1, 0, -2), function() {
+		toggleReverb(0);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(1, 0, -1), function() {
+ 		toggleDelay(0);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(1, 0,  0), function() {
+		togglePhaser(0);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
 
+  // track 1
   makeSwitch(new THREE.Vector3(-2, 0, -2.2), function( event ) {
+	 	changeVolume(event.content, 1);
     console.log("NEW VALUE: " + event.content);
   });
   makeButton(new THREE.Vector3(-1, 0, -2), function() {
+ 		toggleReverb(1);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(-1, 0, -1), function() {
+ 		toggleDelay(1);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(-1, 0,  0), function() {
+ 		togglePhaser(1);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
 
+	// track 2
   makeSwitch(new THREE.Vector3(-4, 0, -2.2), function( event ) {
+	 	changeVolume(event.content, 2);
     console.log("NEW VALUE: " + event.content);
   });
   makeButton(new THREE.Vector3(-3, 0, -2), function() {
+	  toggleReverb(2);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(-3, 0, -1), function() {
+  	toggleDelay(2);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(-3, 0,  0), function() {
+ 		togglePhaser(2);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
-
+	
+	// track 3
   makeSwitch(new THREE.Vector3(2, 0, -2.2), function( event ) {
+ 	 	changeVolume(event.content, 3);
     console.log("NEW VALUE: " + event.content);
   });
   makeButton(new THREE.Vector3(3, 0, -2), function() {
+ 	  toggleReverb(3);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(3, 0, -1), function() {
+ 	  toggleDelay(3);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(3, 0,  0), function() {
+ 	  toggleDelay(3);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
 
+	// track 4
   makeSwitch(new THREE.Vector3(4, 0, -2.2), function( event ) {
+		changeVolume(event.content, 4);
     console.log("NEW VALUE: " + event.content);
   });
   makeButton(new THREE.Vector3(5, 0, -2), function() {
+ 	  toggleReverb(4);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(5, 0, -1), function() {
+ 	  toggleDelay(4);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
   makeButton(new THREE.Vector3(5, 0,  0), function() {
+ 	  togglePhaser(4);
     console.log("BUTTON PRESSED: " + this.pressed);
   });
+
+	// main fader callback: changeMasterVolume(event.content);
 
   // document.addEventListener( 'mousemove', onDocumentMouseMove, false );
   document.addEventListener( 'mousemove', onSwitchMouseMove, false );
