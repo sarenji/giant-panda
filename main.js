@@ -292,11 +292,7 @@ function onSwitchMouseMove() {
   $("#debug").text("x: " + newPoint.x + " y: " + newPoint.y);
 
   if ( SELECTED ) {
-    // intersects = raycaster.intersectObject( plane );
-    // newPoint = intersects[ 0 ].point.sub( offset );
     var position = newPoint.sub(offset);
-    var vector = projector.unprojectVector(position, camera);
-    console.log(vector);
     SELECTED.value = (position.y - minY) / (maxY - minY);
     return;
   }
