@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>Whatever Cost Mixer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="mixer.css" type="text/css">\
+    <script src="tuna.js" type="text/javascript"></script>
+    <script src="mixer.js" type="text/javascript"></script>
+  </head>
+
+ <body>
+    <table>
+      <tr> 
+        <td><input type="button" onclick="toggleReverb(0)" value="Reverb"/></td>
+        <td><input type="button" onclick="toggleReverb(1)" value="Reverb"/></td>
+        <td><input type="button" onclick="toggleReverb(2)" value="Reverb"/></td>
+        <td><input type="button" onclick="toggleReverb(3)" value="Reverb"/></td>
+        <td><input type="button" onclick="toggleReverb(4)" value="Reverb"/></td>
+      </tr>
+    <tr>
+      <td><input type="button" onclick="toggleDelay(0);" value="Delay"/></td>
+      <td><input type="button" onclick="toggleDelay(1);" value="Delay"/></td>
+      <td><input type="button" onclick="toggleDelay(2);" value="Delay"/></td>
+      <td><input type="button" onclick="toggleDelay(3);" value="Delay"/></td>
+      <td><input type="button" onclick="toggleDelay(4);" value="Delay"/></td>
+    </tr>
+     <tr>
+      <td><input type="button" onclick="togglePhaser(0)" value="Phaser"/></td>
+      <td><input type="button" onclick="togglePhaser(1)" value="Phaser"/></td>
+      <td><input type="button" onclick="togglePhaser(2)" value="Phaser"/></td>
+      <td><input type="button" onclick="togglePhaser(3)" value="Phaser"/></td>
+      <td><input type="button" onclick="togglePhaser(4)" value="Phaser"/></td>
+    </tr>
+    <tr>
+        <td><input class="faderVol" type="range" min="0" max="1" step="0.01" value="0.5" onchange="changeVolume(this,0);"/></td>
+        <td><input class="faderVol" type="range" min="0" max="1" step="0.01" value="0.5" onchange="changeVolume(this,1);"/></td>
+        <td><input class="faderVol" type="range" min="0" max="1" step="0.01" value="0.5" onchange="changeVolume(this,2);"/></td>
+        <td><input class="faderVol" type="range" min="0" max="1" step="0.01" value="0.5" onchange="changeVolume(this,3);"/></td>
+        <td><input class="faderVol" type="range" min="0" max="1" step="0.01" value="0.5" onchange="changeVolume(this,4);"/></td>
+    </tr>
+  </table>
+</body>
+
+	
+ <audio id="audio1" oncanplay="myOnCanPlayFunction()" src="tracks/DRUMS.mp3"   preload="auto" autobuffer>
+</audio>   
+ <audio id="audio2" oncanplay="myOnCanPlayFunction()" src="tracks/BASS.mp3"   preload="auto" autobuffer>  
+</audio> 
+ <audio id="audio3" oncanplay="myOnCanPlayFunction()" src="tracks/PIANO.mp3"   preload="auto" autobuffer>  
+</audio> 
+ <audio id="audio4" oncanplay="myOnCanPlayFunction()" src="tracks/VOCALS.mp3"   preload="auto" autobuffer>  
+</audio> 
+ <audio id="audio5" oncanplay="myOnCanPlayFunction()" src="tracks/GTR_ALL.mp3"   preload="auto" autobuffer>  
+</audio> 
+ 
+
+
+
+<script>
+var test = 1;
+var test2 = 1;
+var test3 = 1;
+var test4 = 1;
+var test5 = 1;
+var canplay = 0;
+
+function myOnCanPlayFunction(){
+	canplay +=1;
+	document.getElementById("loading").innerHTML= "Loading" + canplay*20 + "%";
+	if(canplay*20 > 80 ){
+		document.getElementById("loading").innerHTML="Ready!";
+	}	 
+}
+
+function StartAll(soundobj) {
+	 if(canplay*20 > 80){
+			var thissound=document.getElementById('audio1');  
+				thissound.play();
+			thissound=document.getElementById('audio2');  
+				thissound.play();
+			thissound=document.getElementById('audio3');  
+				thissound.play();
+			thissound=document.getElementById('audio4');  
+				thissound.play();
+			thissound=document.getElementById('audio5');  
+				thissound.play();
+	}	 
+}
+
+</script>
+
+
+<input type="button" value="Start Song" onClick="init()"> <span id="loading">Loading ...</span> 
+<br>
+<!--<input type="button" value="Open Remote Control" onclick="openWin()" />-->
+<span id="range">Test data: 0</span><br>
+
+</html>
