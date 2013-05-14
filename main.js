@@ -478,7 +478,6 @@ $(function() {
   $image.load(function() {
     $("#background").append($image);
     resizeWindow();
-    onWindowResize();
   });
   image.src = "images/room.png";
 });
