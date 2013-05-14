@@ -25,7 +25,7 @@ var speakerImages = [];
     initTracks();
     StartAll();
     isWorking = true;
-    //speakerImages = [document.getElementById("speaker1"),document.getElementById("speaker2")];
+    speakerImages = [document.getElementById("speakerTR"),document.getElementById("speakerTL")];
     window.setInterval(gainMeter,50);
   }
   catch(e) {
