@@ -68,6 +68,17 @@ THREE.extend( Button.prototype, THREE.EventDispatcher.prototype );
 
 Button.prototype.toggle = function() {
   this.pressed = !this.pressed;
+  var color = this.mesh.material.color.clone();
+  if (this.pressed) {
+    color.r += .3;
+    color.g += .3;
+    color.b += .3;
+  } else {
+    color.r -= .3;
+    color.g -= .3;
+    color.b -= .3;
+  }
+  this.mesh.material.color.copy(color);
   this.callback.call(this);
 };
 
