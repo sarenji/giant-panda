@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
   <title>giant panda guerilla dub squad</title>
@@ -8,52 +7,116 @@
   <script src="audioCode/mixer.js"></script>
   <script src="audioCode/tuna.js" type="text/javascript"></script>
   <link rel="stylesheet" type="text/css" href="style.css"/>
-  <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
-  <script src="http://vjs.zencdn.net/c/video.js"></script>
 </head>
 <body>
   <div id="background">
     <video id="captions" autoplay>
-      <source src="http://giantpanda.cias.rit.edu/videos/captions.mp4" type="video/mp4">
+      <source src="http://giantpanda.cias.rit.edu/videos/captions.mp4" type="video/mp4"
+>
     </video>
-	<div id = "container">
-		
-		<!--<video id="myVideoTag"  height="90%" style="position: absolute;z-index: 0;height:90%;" data-setup="{}">
-			<source src="videos/main_video.webm" type="video/webm">
-		</video>-->
+       <div id = "container">
 
-		<div id="tR"></div>
-		<div id="mR"></div>
-		<div id="bR"></div>
-		<div id="tL"></div>
-		<div id="mL"></div>
-		<div id="bL"></div>
-	</div>
+               <!--<video id="myVideoTag"  height="90%" style="position: absolute;z-ind
+ex: 0;height:90%;" data-setup="{}">
+                       <source src="videos/main_video.webm" type="video/webm">
+               </video>-->
+
+               <div id="tR"></div>
+               <div id="mR"></div>
+               <div id="bR"></div>
+               <div id="tL"></div>
+               <div id="mL"></div>
+               <div id="bL"></div>
+       </div>
   </div>
   <script src="popups.js" type="text/javascript"></script>
   <script type="text/javascript" src="main.js"></script>
   <div id="text_tooltip"></div>
   
   <!---audio stuff below-->
-	<audio id="audio1" oncanplay="myOnCanPlayFunction()" src="http://giantpanda.cias.rit.edu/tracks/DRUMS.mp3"   preload="auto" autobuffer></audio>
-	<audio id="audio2" oncanplay="myOnCanPlayFunction()" src="http://giantpanda.cias.rit.edu/tracks/GTR_LEADS.mp3"   preload="auto" autobuffer></audio>
-	<audio id="audio3" oncanplay="myOnCanPlayFunction()" src="http://giantpanda.cias.rit.edu/tracks/KEYS_MIX.mp3"   preload="auto" autobuffer></audio>
-	<audio id="audio4" oncanplay="myOnCanPlayFunction()" src="http://giantpanda.cias.rit.edu/tracks/VOCALS.mp3"   preload="auto" autobuffer></audio>
-	<audio id="audio5" oncanplay="myOnCanPlayFunction()" src="http://giantpanda.cias.rit.edu/tracks/GTR_RHY.mp3"   preload="auto" autobuffer></audio>
-	<audio id="audio6" oncanplay="myOnCanPlayFunction()" src="http://giantpanda.cias.rit.edu/tracks/BASS.mp3"   preload="auto" autobuffer></audio>
-	<audio id="finalMix" oncanplay="myOnCanPlayFunction()" src="http://giantpanda.cias.rit.edu/tracks/FINAL_MIX.mp3" preload="auto" autobuffer></audio>
+			<audio id="audio2" onended="showEndingDiv" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/DRUMS.mp3"   preload="auto" autobuffer>
+	</audio>   
+	<audio id="audio1" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/GTR_LEADS.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="audio4" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/KEYS_MIX.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="audio5" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/VOCALS.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="audio3" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/GTR_RHY.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="audio6" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/BASS.mp3"   preload="auto" autobuffer>  
+	</audio> 
+	<audio id="finalMix" onended="showEndingDiv" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/FINAL_MIX.mp3" preload="auto" autobuffer>  
+	</audio> 
+	
+	<div id="screenDiv">
+		<div id="loadingDiv" onclick="startTheShow()">
+			<img id="loadingLogo" src="loadEndScreenImages/loadingLogo.png" alt="GPGDS Logo"></img>
+			<p id="doneLoadingMessage" class="loadingText"></p>
+			<p id="loadingValue"></p>
+		</div>
+		<div id="endingDiv">
+				<a id="facebookIcon" href="https://www.facebook.com/giantpandadub?fref=ts" target="_blank">
+					<img src="loadEndScreenImages/facebook.png" alt="GPGDS on FB"/>
+				</a>
+				<a id="twitterIcon" href="https://twitter.com/GiantPandaDub" target="_blank">
+					<img src="loadEndScreenImages/twitter.png" alt="GPGDS on Twitter"/>
+				</a>
+				<a id="pandaSiteIcon" href="http://livepanda.com/" target="_blank">
+					<img src="loadEndScreenImages/websiteLinkIcon.png" alt="GPGDS website"/>
+				</a>
+				<a id="playAgainLink" href="http://giantpanda.cias.rit.edu/test/">Play again</a>
+			</div>	
+	</div>
+	
+</body>
+
 	<script>
 		var canplay = 0;
-		var isPlaying = false;
+		var thingsLoaded = 0;
+		var opacityIntervalId; 
+		var goalLoadingTime = 3;
+		var currentLoadingTime;
+		var LENGTHOFSONG = 255000; // apprximately 4min20seconds
+		var isPlaying = false;		
+		var opacityCount = 0;
+		var numThingsToLoad = 7;
+		// the number of things to load that we want to track: right now its:
+		// 7 song files
+		// ? video files
+		// ? images
+		// change this to include each item we want to track loading of
+
 		
+		// this is called everytime a song or video is loaded
 		function myOnCanPlayFunction(){
 			canplay +=1;
-			if ( (canplay*20 >= 120) && (!isPlaying) ){
-				initAudio();
-				isPlaying = true;
-			}
+			thingsLoaded++;
+			updateLoadedText();
+		}
+		
+		//updates the % loaded counter
+		function updateLoadedText(){
+			document.getElementById("loadingValue").innerHTML = 
+				(100 - (100/numThingsToLoad)*(numThingsToLoad-thingsLoaded)) + "%";
+				if ( thingsLoaded >= numThingsToLoad ){
+					document.getElementById("doneLoadingMessage").innerHTML = 
+						"Your interactive experience has loaded. Click anywhere to begin!";
+				}
 		}
 
+		//calls the initialization functions for audio/video once all assets loaded
+		function startTheShow(){
+			if ( thingsLoaded >= numThingsToLoad ){
+				document.getElementById("loadingDiv").style.visibility = "hidden";
+				initAudio(); // start the audio
+				$('#mainVideo').get(0).play();
+				isPlaying = true;
+				setTimeout(function(){showEndingDiv()},LENGTHOFSONG);
+			}	
+		}
+		
+		// plays all audio
 		function StartAll(soundobj) {
 			if (!isPlaying){
 				var thissound=document.getElementById('audio1');  
@@ -70,10 +133,26 @@
 					thissound.play();	 
 				}
 		}
+		
+		// shows the ending div w/social media. Has a callback from one of the audio tracks so
+		// it is called after the song is over. It reveals a link to FB, Twitter, and a page reload link
+		function showEndingDiv(){
+			document.getElementById("endingDiv").style.visibility = "visible";
+			opacityIntervalId = window.setInterval(function(){increaseEndingOpacity()},10);
+		}
+		
+		// used to fade in the ending screen, looks nice
+		function increaseEndingOpacity(){
+			var screen = document.getElementById("endingDiv");
+			//console.log(opacityCount);
+			if (opacityCount < 0.9){
+				screen.style.opacity = opacityCount;
+				opacityCount = opacityCount+0.0075;
+			}
+			else{
+				window.clearInterval(opacityIntervalId);
+			}
+		}
+		
 	</script>
-	</body>
 </html>
-
-
-
-	
