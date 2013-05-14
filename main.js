@@ -440,18 +440,77 @@ function resizeScreen(elemID){
 
 
 $(function() {
+ // $('#div_video').get(0).play();
   var image = new Image();
   image.id = "room";
   var $image = $(image);
   $image.load(function() {
     $("#background").append($image);
-     $("#background").css("opacity",0.4);
+   
     resizeWindow();
     onWindowResize();
   });
   image.src = "images/room.png";
 });
 
+
+
 $(window).on('resize', resizeWindow);
+
+
+
+
+$("#tL").click(function(){
+var url = "http://giantpanda.cias.rit.edu/videos/v1.webm";
+var title = "marchWashington";
+changeMovieSource(url, title);
+});
+
+$("#mL").click(function(){
+var url = "http://giantpanda.cias.rit.edu/videos/v2.webm";
+var title = "fanArt";
+changeMovieSource(url, title);
+});
+$("#bL").click(function(){
+var url = "http://giantpanda.cias.rit.edu/videos/v3.webm";
+var title = "1961";
+changeMovieSource(url, title);
+});
+$("#tR").click(function(){
+var url = "http://giantpanda.cias.rit.edu/videos/v4.webm";
+var title = "marchPeach";
+changeMovieSource(url, title);
+});
+
+$("#mR").click(function(){
+var url = "http://giantpanda.cias.rit.edu/videos/v5.webm";
+var title = "1960s";
+changeMovieSource(url, title);
+});
+$("#bR").click(function(){
+var url = "http://giantpanda.cias.rit.edu/videos/v6.webm";
+var title = "fanArt2";
+changeMovieSource(url, title);
+});
+
+
+var videoChangingPending = false;
+function changeMovieSource(url, title){
+        var $video = $('#div_video');
+        try {
+            document.getElementById('div_video').src = url;
+        }
+        catch (e) {
+            alert(e);
+        }     
+
+        $video.attr('autoplay', 'true');
+        $video.data('currentTitle', title);
+
+        document.getElementById('div_video').load();
+        $video.prop('muted', true);
+        videoChangingPending = false;
+}    
+
 
 

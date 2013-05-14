@@ -14,10 +14,16 @@
 <body>
   <div id="background">
 	<div id = "container">
+		<div id = "smallVideoWindow">
+			<video id="div_video"  >
+				<source src="http://giantpanda.cias.rit.edu/videos/v3.webm" autoplay type="video/webm">
+			</video>
+		</div>
+		<video id="mainVideo" >
+			<source src="videos/main_video_5x6.webm" type="video/webm">
+		</video>
+	
 		
-		<!--<video id="myVideoTag"  height="90%" style="position: absolute;z-index: 0;height:90%;" data-setup="{}">
-			<source src="videos/main_video.webm" type="video/webm">
-		</video>-->
 
 		<div id="tR"></div>
 		<div id="mR"></div>
@@ -25,12 +31,18 @@
 		<div id="tL"></div>
 		<div id="mL"></div>
 		<div id="bL"></div>
+
+		<div id="speakerBR"></div>
+		<div id="speakerBL"></div>
+		<div id="speakerTR"></div>
+		<div id="speakerTL"></div>		
 	</div>
   </div>
   <script type="text/javascript" src="main.js"></script>
   <div id="debug"></div>
   
   <!---audio stuff below-->
+  <!--
 	<audio id="audio1" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/DRUMS.mp3"   preload="auto" autobuffer>
 	</audio>   
 	<audio id="audio2" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/GTR_LEADS.mp3"   preload="auto" autobuffer>  
@@ -44,7 +56,8 @@
 	<audio id="audio6" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/BASS.mp3"   preload="auto" autobuffer>  
 	</audio> 
 	<audio id="finalMix" oncanplay="myOnCanPlayFunction()" src="audioCode/tracks/FINAL_MIX.mp3" preload="auto" autobuffer>  
-	</audio> 
+	</audio> -->
+
 	<script>
 		var canplay = 0;
 		var isPlaying = false;
