@@ -61,6 +61,13 @@ canvas {
 video {
   -webkit-transform-style: preserve-3d;
 }
+
+#captions {
+  position: absolute;
+  bottom: 9%;
+  left: 37%;
+}
+
 #tR {
 position: absolute;
 left: 70%;
