@@ -34,7 +34,8 @@ margin-right: auto;
 
 canvas {
   position: absolute;
-  z-index: -100;
+  z-index: 150;
+  pointer-events: none;
 }
 
 #debug {

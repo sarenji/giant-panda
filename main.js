@@ -467,7 +467,6 @@ $(function() {
   var $image = $(image);
   $image.load(function() {
     $("#background").append($image);
-     $("#background").css("opacity",0.4);
     resizeWindow();
     onWindowResize();
   });
