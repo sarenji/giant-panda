@@ -380,25 +380,33 @@ function resizeWindow() {
 }
 
 function resize2DRoom() {
-  var $image   = $("#room");
-  if ($image.length === 0) return;
-  var width    = $image.width();
-  var height   = $image.height();
+  //alert('resizing');
+  var $myDIV   = $("#background");
+  if ($myDIV.length === 0) return;
+  var width    = $myDIV.width();
+  var height   = $myDIV.height();
   var wWidth   = $(window).width();
   var wHeight  = $(window).height();
   var hRatio   = height / wHeight;
   var top      = 0;
   var left     = (wWidth - width / hRatio) / 2;
 
-  $image.attr({
+  $myDIV.attr({
     width: width / hRatio,
     height: wHeight
   });
-  $image.css({
+  $myDIV.css({
     top: top + "px",
     left: left + "px"
   });
 }
+
+function resizeScreen(elemID){
+  var element = document.getElementById("elemID");
+
+
+}
+
 
 $(function() {
   var image = new Image();
@@ -406,9 +414,12 @@ $(function() {
   var $image = $(image);
   $image.load(function() {
     $("#background").append($image);
+     $("#background").css("opacity",0.4);
     resizeWindow();
   });
   image.src = "images/room.png";
 });
 
 $(window).on('resize', resizeWindow);
+
+
