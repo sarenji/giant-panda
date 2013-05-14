@@ -1,41 +1,29 @@
 html, body {
   margin: 0;
   padding: 0;
-    height: 100%;
 }
 
 body {
   background: #333;
-  height: 100%;
 }
 
 #background {
-  background-color: red;
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   overflow: hidden;
-    height: 100%;
-    width: 100%;
 }
 
-
-#container {
-background-color: green;
-background: url("images/room.png");
-background-size: 100% 100%;
-height: 100%;
-width: auto;
-margin-left: auto;
-margin-right: auto;
+#background #room {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 canvas {
   position: absolute;
-  z-index: 150;
-  pointer-events: none;
 }
 
 #debug {
@@ -46,114 +34,112 @@ canvas {
   height: 150px;
   background: rgba(0, 0, 0, .5);
   color: #fff;
-  z-index: 100;
+  z-index: 2;
   /*display: none;*/
 }
 
-#videoTopLeft #videoTopRight
-#videoMiddleLeft #videoMiddleRight
-#videoBottomLeft #videoBottomRight
-#p1 #p2 #p3 #p4 #p5 #p6{
-    max-width: 100%;
-    height: auto;
- /* ie8 */
-}
-  
-video {
-  -webkit-transform-style: preserve-3d;
+#loadingDiv {
+	opacity: 0.8;
+	background-color: #000000;
+	z-index: 3;
+	width: 100%;
+	height: 100%;
+	position: absolute;
 }
 
-#captions {
+#screenDiv {
+	opacity: 1.0;
+	z-index: 3;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+#loadingValue {
+color: #FFFFFF;
+font-family: "Arial Black", Gadget, sans-serif;
+font-size: 45px;
+position: absolute;
+right: 25%;
+left: 45%;
+bottom:5%;
+}
+
+.loadingText {
+	opacity: 1.0;
+	color: #FFFFFF;
+	font-family: "Arial Black", Gadget, sans-serif;
+	font-size: 30px;
+	position: absolute;
+	right: 25%;
+	left: 26%;
+}
+
+#loadingLogo {
+opacity: 0.8;
+padding-top: 100px;
+position: absolute;
+right: 30%;
+left: 30%;
+width: 40%;
+}
+
+#endingDiv{
+	opacity: 0.0;
+	background-color: #000000;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
   position: absolute;
-  bottom: 9%;
-  left: 37%;
+ 	visibility: hidden;
 }
 
-#tR {
-position: absolute;
-left: 70%;
-top: 5.5%;
-width: 13%;
-height: 14.8%;
-background: url("images/toprightS2.gif") no-repeat center center;
-background-size: 100% 100%;
-}
-#tR:hover{
-    background-image: url("images/topright.gif");
-}
-#mR {
-position: absolute;
-left: 82.6%;
-top: 27%;
-width: 11.3%;
-height: 21.2%;
-background: url("images/rightmiddleS2.gif") no-repeat center center;
-background-size: 100% 100%;
-}
-#mR:hover{
-    background-image: url("images/rightmiddle.gif");
-}
-#bR {
-position: absolute;
-left: 75.1%;
-top: 52.3%;
-width: 18.3%;
-height: 26.5%;
-background: url("images/bottomRightS2.gif") no-repeat center center;
-background-size: 100% 100%;
-}
-#bR:hover{
-    background-image: url("images/bottomRight.gif");
-}
-#tL {
-position: absolute;
-left: 20%;
-top: 5.1%;
-width: 12.9%;
-height: 16%;
-background: url("images/topleftS2.gif") no-repeat center center;
-background-size: 100% 100%;
-}
-#tL:hover{
-    background-image: url("images/topleft.gif");
-}
-#mL {
-position: absolute;
-left: 7%;
-top: 26%;
-width: 12.5%;
-height: 24%;
-background: url("images/leftmiddleS2.gif") no-repeat center center;
-background-size: 100% 100%;
-}
-#mL:hover{
-    background-image: url("images/leftmiddle.gif");
-}
-#bL {
-position: absolute;
-left: 12%;
-top: 53%;
-width: 15.2%;
-height: 25.3%;
-background: url("images/bottomLeftS2.gif") no-repeat center center;
-background-size: 100% 100%;
-}
-#bL:hover{
-    background-image: url("images/bottomLeft.gif");
+.socialMediaLink {
+	opacity:1.0;
+	z-index: 4;
+	padding-top: 400px;
+	padding-left: 150px;
+	text-decoration:none;
+	position: absolute;
 }
 
-.tooltip {
-  position: absolute;
-  z-index: 200;
+#facebookIcon{
+	opacity:1.0;
+	z-index: 4;
+	top: 10%;
+	right: 30%;
+	left: 30%;
+	text-decoration:none;
+	position: absolute;
 }
 
-#text_tooltip {
-  position: absolute;
-  z-index: 200;
-  font: 2em "Helvetica Neue", sans-serif;
-  padding: 7px 14px;
-  background: #000;
-  background: rgba(0, 0, 0, .5);
-  border-radius: 6px;
-  color: #fff;
+#twitterIcon{
+	opacity:1.0;
+	z-index: 4;
+	bottom: 20%;
+	right: 30%;
+	left: 30%;
+	text-decoration:none;
+	position: absolute;
+}
+
+#pandaSiteIcon{
+	opacity:1.0;
+	z-index: 4;
+	top: 10%;
+	right: 30%;
+	text-decoration:none;
+	position: absolute;
+}
+
+#playAgainLink{
+	opacity:1.0;
+	z-index: 4;
+	bottom: 30%;
+	right: 30%;
+	text-decoration:none;
+	position: absolute;
+	color: #FFFFFF;
+	font-family: "Arial Black", Gadget, sans-serif;
+	font-size: 30px;
 }
