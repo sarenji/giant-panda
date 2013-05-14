@@ -116,7 +116,7 @@ function init() {
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize( window.innerWidth, window.innerHeight );
-  container.appendChild( renderer.domElement );
+  $("#container").append( renderer.domElement );
 
   // First fader from the left
   // track 0
