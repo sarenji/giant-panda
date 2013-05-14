@@ -25,8 +25,9 @@ init();
 animate();
 
 
-function Fader(mesh, bounds, maxPosition) {
+function Fader(mesh, popupImage, bounds, maxPosition) {
   this.mesh = mesh;
+  this.popupImage = popupImage;
 
   var value = 0;
   this.minPos = mesh.position.clone();
@@ -56,8 +57,9 @@ function Fader(mesh, bounds, maxPosition) {
 
 THREE.extend( Fader.prototype, THREE.EventDispatcher.prototype );
 
-function Button(mesh, callback) {
+function Button(mesh, tooltipText, callback) {
   this.mesh = mesh;
+  this.tooltipText = tooltipText;
   this.callback = callback;
   this.pressed = false;
 }
@@ -66,6 +68,17 @@ THREE.extend( Button.prototype, THREE.EventDispatcher.prototype );
 
 Button.prototype.toggle = function() {
   this.pressed = !this.pressed;
+  var color = this.mesh.material.color.clone();
+  if (this.pressed) {
+    color.r += .3;
+    color.g += .3;
+    color.b += .3;
+  } else {
+    color.r -= .3;
+    color.g -= .3;
+    color.b -= .3;
+  }
+  this.mesh.material.color.copy(color);
   this.callback.call(this);
 };
 
@@ -107,96 +120,102 @@ function init() {
 
   // First fader from the left
   // track 0
-  makeSwitch({minY: -45.78, maxY: -63.42},
+  makeSwitch("images/icons/bass.png",
+    {minY: -45.78, maxY: -63.42},
     new THREE.Vector3(-58, -66, 0),
     new THREE.Vector3(-60, -66, 24.895702365273355),
     function( event ) {
       changeVolume(event.content, 0);
     });
-  makeButton(0x1B3C0D, new THREE.Vector3(-49, -66, 3), function() {
+  makeButton("Reverb", 0x1B3C0D, new THREE.Vector3(-49, -66, 3), function() {
     toggleReverb(0);
   });
-  makeButton(0x7E1D17, new THREE.Vector3(-49.5, -66, 13), function() {
+  makeButton("Delay", 0x7E1D17, new THREE.Vector3(-49.5, -66, 13), function() {
     toggleDelay(0);
   });
-  makeButton(0xED9532, new THREE.Vector3(-50, -66, 23), function() {
+  makeButton("Phaser", 0xED9532, new THREE.Vector3(-50, -66, 23), function() {
     togglePhaser(0);
   });
 
   // Second fader from the left
   // track 1
-  makeSwitch({minY: -46.19, maxY: -63.8},
+  makeSwitch("images/icons/drums.png",
+    {minY: -46.19, maxY: -63.8},
     new THREE.Vector3(-31, -66, .33),
     new THREE.Vector3(-32, -66, 25.3),
     function( event ) {
       changeVolume(event.content, 1);
     });
-  makeButton(0x1B3C0D, new THREE.Vector3(-22, -66, 4), function() {
+  makeButton("Reverb", 0x1B3C0D, new THREE.Vector3(-22, -66, 4), function() {
     toggleReverb(1);
   });
-  makeButton(0x7E1D17, new THREE.Vector3(-22.5, -66, 14), function() {
+  makeButton("Delay", 0x7E1D17, new THREE.Vector3(-22.5, -66, 14), function() {
     toggleDelay(1);
   });
-  makeButton(0xED9532, new THREE.Vector3(-23, -66, 24), function() {
+  makeButton("Phaser", 0xED9532, new THREE.Vector3(-23, -66, 24), function() {
     togglePhaser(1);
   });
 
   // Third fader from the left
   // track 2
-  makeSwitch({minY: -46.8, maxY: -64},
+  makeSwitch("images/icons/gtr.png",
+    {minY: -46.8, maxY: -64},
     new THREE.Vector3(-4.1, -66, .66),
     new THREE.Vector3(-5.4, -66, 25.7),
     function( event ) {
       changeVolume(event.content, 2);
     });
-  makeButton(0x1B3C0D, new THREE.Vector3(4.9, -66, 5), function() {
+  makeButton("Reverb", 0x1B3C0D, new THREE.Vector3(4.9, -66, 5), function() {
     toggleReverb(2);
   });
-  makeButton(0x7E1D17, new THREE.Vector3(4.9, -66, 15), function() {
+  makeButton("Delay", 0x7E1D17, new THREE.Vector3(4.9, -66, 15), function() {
     toggleDelay(2);
   });
-  makeButton(0xED9532, new THREE.Vector3(4.9, -66, 25), function() {
+  makeButton("Phaser", 0xED9532, new THREE.Vector3(4.9, -66, 25), function() {
     togglePhaser(2);
   });
 
   // Fourth fader from the left
   // track 3
-  makeSwitch({minY: -46.4, maxY: -64.4},
+  makeSwitch("images/icons/keys.png",
+    {minY: -46.4, maxY: -64.4},
     new THREE.Vector3(23.3, -66, 1),
     new THREE.Vector3(23, -66, 26.1),
     function( event ) {
       changeVolume(event.content, 3);
     });
-  makeButton(0x1B3C0D, new THREE.Vector3(32.5, -66, 5.5), function() {
+  makeButton("Reverb", 0x1B3C0D, new THREE.Vector3(32.5, -66, 5.5), function() {
     toggleReverb(3);
   });
-  makeButton(0x7E1D17, new THREE.Vector3(32.5, -66, 15.5), function() {
+  makeButton("Delay", 0x7E1D17, new THREE.Vector3(32.5, -66, 15.5), function() {
     toggleDelay(3);
   });
-  makeButton(0xED9532, new THREE.Vector3(32.5, -66, 25.5), function() {
+  makeButton("Phaser", 0xED9532, new THREE.Vector3(32.5, -66, 25.5), function() {
     togglePhaser(3);
   });
 
   // Fifth fader from the left
   // track 4
-  makeSwitch({minY: -46.6, maxY: -65},
+  makeSwitch("images/icons/vox.png",
+    {minY: -46.6, maxY: -65},
     new THREE.Vector3(48.25, -66, 1.33),
     new THREE.Vector3(47.25, -66, 26.5),
     function( event ) {
       changeVolume(event.content, 4);
     });
-  makeButton(0x1B3C0D, new THREE.Vector3(57.25, -66, 6), function() {
+  makeButton("Reverb", 0x1B3C0D, new THREE.Vector3(57.25, -66, 6), function() {
     toggleReverb(4);
   });
-  makeButton(0x7E1D17, new THREE.Vector3(57.25, -66, 16), function() {
+  makeButton("Delay", 0x7E1D17, new THREE.Vector3(57.25, -66, 16), function() {
     toggleDelay(4);
   });
-  makeButton(0xED9532, new THREE.Vector3(57.25, -66, 26), function() {
+  makeButton("Phaser", 0xED9532, new THREE.Vector3(57.25, -66, 26), function() {
     togglePhaser(4);
   });
 
   // Master fader
-  makeSwitch({minY: -42.5, maxY: -66},
+  makeSwitch("images/icons/vol.png",
+    {minY: -42.5, maxY: -66},
     new THREE.Vector3(82.2, -66, -5),
     new THREE.Vector3(82.2, -66, 27.2),
     1.5,
@@ -213,7 +232,7 @@ function init() {
 
 }
 
-function makeSwitch(bounds, position, toPosition, scale, callback) {
+function makeSwitch(popupImage, bounds, position, toPosition, scale, callback) {
   if (typeof callback === 'undefined') {
     callback = scale;
     scale = 1;
@@ -224,20 +243,20 @@ function makeSwitch(bounds, position, toPosition, scale, callback) {
       child.material.color.setHex(0xED9532);
       faderMeshes.push( child );
       child.position.copy( position );
-      var fader = new Fader(child, bounds, toPosition);
+      var fader = new Fader(child, popupImage, bounds, toPosition);
       faders.push( fader );
       fader.addEventListener( "valuechange", callback);
     }
   });
 }
 
-function makeButton(color, position, callback) {
+function makeButton(tooltipText, color, position, callback) {
   loadModel('switch', 'obj/button.obj', function(child) {
     if ( child instanceof THREE.Mesh ) {
       child.scale.x = child.scale.y = child.scale.z = .05;
       child.position.copy( position );
       child.material.color.setHex(color);
-      buttons.push( new Button(child, callback) );
+      buttons.push( new Button(child, tooltipText, callback) );
       buttonMeshes.push(child);
     }
   });
@@ -292,7 +311,7 @@ var MIN_SLIDER_Z = -5;
 var BOARD_HEIGHT = 3;
 var BOARD_LENGTH = 3;
 var SLOPE_START = 3;
-function onSwitchMouseMove() {
+function onSwitchMouseMove(event) {
   var raycaster, intersects, newPoint;
   event.preventDefault();
 
@@ -302,13 +321,13 @@ function onSwitchMouseMove() {
   raycaster = getRaycaster();
   intersects = raycaster.intersectObject( plane );
   newPoint = intersects[ 0 ].point;
-  $("#debug").text("x: " + newPoint.x + " y: " + newPoint.y);
 
   if ( SELECTED ) {
     var position = newPoint.sub(offset);
     var minY = SELECTED.minY;
     var maxY = SELECTED.maxY;
     SELECTED.value = (position.y - minY) / (maxY - minY);
+    hideTooltips();
     return;
   }
 
@@ -336,6 +355,19 @@ function onSwitchMouseMove() {
 
   if (!INTERSECTED_BUTTON && !INTERSECTED) {
     container.style.cursor = 'auto';
+    hideTooltips();
+  } else if (INTERSECTED) {
+    // Show fader image
+    var fader;
+    for (var i = 0; i < faders.length; i++) {
+      if (INTERSECTED == faders[i].mesh) {
+        fader = faders[i];
+        break;
+      }
+    }
+    showImageTooltip(event, fader.popupImage);
+  } else if (INTERSECTED_BUTTON) {
+    showTextTooltip(event, INTERSECTED_BUTTON.tooltipText);
   }
 }
 
@@ -446,7 +478,6 @@ $(function() {
   var $image = $(image);
   $image.load(function() {
     $("#background").append($image);
-   
     resizeWindow();
     onWindowResize();
   });
