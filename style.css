@@ -45,10 +45,9 @@ canvas {
   height: 150px;
   background: rgba(0, 0, 0, .5);
   color: #fff;
-  z-index: 2;
+  z-index: 100;
   /*display: none;*/
 }
-
 
 #videoTopLeft #videoTopRight
 #videoMiddleLeft #videoMiddleRight

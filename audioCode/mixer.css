@@ -1,0 +1,13 @@
+
+.faderVol {
+    -webkit-appearance: slider-vertical;
+    width: 20px;
+    height: 100px;
+}
+
+
+.faderFX {
+    -webkit-appearance: slider-vertical;
+    width: 20px;
+    height: 100px;
+}
