@@ -20,19 +20,19 @@ var mouse = new THREE.Vector2(),
     INTERSECTED, SELECTED, INTERSECTED_BUTTON;
 var projector;
 var plane;
-var maxY = -70.5123,
-    minY = -46.894;
 
 init();
 animate();
 
 
-function Fader(mesh, maxPosition) {
+function Fader(mesh, bounds, maxPosition) {
   this.mesh = mesh;
 
   var value = 0;
   this.minPos = mesh.position.clone();
   this.maxPos = maxPosition.clone();
+  this.minY = bounds.minY;
+  this.maxY = bounds.maxY;
 
   this.__defineGetter__("value", function() {
     return value;
@@ -85,8 +85,15 @@ function init() {
   var ambient = new THREE.AmbientLight( 0x222222 );
   scene.add( ambient );
 
+  // Front lighting
   var directionalLight = new THREE.DirectionalLight( 0xffeedd );
   directionalLight.position.set( 30, 0, 200 ).normalize();
+  scene.add( directionalLight );
+
+  // Back lighting
+  var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+  directionalLight.position.set( 0, 100, -200 ).normalize();
+  directionalLight.intensity = 0.25;
   scene.add( directionalLight );
 
   // plane for clicking
@@ -100,7 +107,8 @@ function init() {
 
   // First fader from the left
   // track 0
-  makeSwitch(new THREE.Vector3(-58, -66, 0),
+  makeSwitch({minY: -45.78, maxY: -63.42},
+    new THREE.Vector3(-58, -66, 0),
     new THREE.Vector3(-60, -66, 24.895702365273355),
     function( event ) {
       changeVolume(event.content, 0);
@@ -117,7 +125,8 @@ function init() {
 
   // Second fader from the left
   // track 1
-  makeSwitch(new THREE.Vector3(-31, -66, .33),
+  makeSwitch({minY: -46.19, maxY: -63.8},
+    new THREE.Vector3(-31, -66, .33),
     new THREE.Vector3(-32, -66, 25.3),
     function( event ) {
       changeVolume(event.content, 1);
@@ -134,7 +143,8 @@ function init() {
 
   // Third fader from the left
   // track 2
-  makeSwitch(new THREE.Vector3(-4.1, -66, .66),
+  makeSwitch({minY: -46.8, maxY: -64},
+    new THREE.Vector3(-4.1, -66, .66),
     new THREE.Vector3(-5.4, -66, 25.7),
     function( event ) {
       changeVolume(event.content, 2);
@@ -151,7 +161,8 @@ function init() {
 
   // Fourth fader from the left
   // track 3
-  makeSwitch(new THREE.Vector3(23.3, -66, 1),
+  makeSwitch({minY: -46.4, maxY: -64.4},
+    new THREE.Vector3(23.3, -66, 1),
     new THREE.Vector3(23, -66, 26.1),
     function( event ) {
       changeVolume(event.content, 3);
@@ -168,7 +179,8 @@ function init() {
 
   // Fifth fader from the left
   // track 4
-  makeSwitch(new THREE.Vector3(48.25, -66, 1.33),
+  makeSwitch({minY: -46.6, maxY: -65},
+    new THREE.Vector3(48.25, -66, 1.33),
     new THREE.Vector3(47.25, -66, 26.5),
     function( event ) {
       changeVolume(event.content, 4);
@@ -184,7 +196,8 @@ function init() {
   });
 
   // Master fader
-  makeSwitch(new THREE.Vector3(82.2, -66, -5),
+  makeSwitch({minY: -42.5, maxY: -66},
+    new THREE.Vector3(82.2, -66, -5),
     new THREE.Vector3(82.2, -66, 27.2),
     1.5,
     function( event ) {
@@ -200,7 +213,7 @@ function init() {
 
 }
 
-function makeSwitch(position, toPosition, scale, callback) {
+function makeSwitch(bounds, position, toPosition, scale, callback) {
   if (typeof callback === 'undefined') {
     callback = scale;
     scale = 1;
@@ -211,7 +224,7 @@ function makeSwitch(position, toPosition, scale, callback) {
       child.material.color.setHex(0xED9532);
       faderMeshes.push( child );
       child.position.copy( position );
-      var fader = new Fader(child, toPosition);
+      var fader = new Fader(child, bounds, toPosition);
       faders.push( fader );
       fader.addEventListener( "valuechange", callback);
     }
@@ -293,6 +306,8 @@ function onSwitchMouseMove() {
 
   if ( SELECTED ) {
     var position = newPoint.sub(offset);
+    var minY = SELECTED.minY;
+    var maxY = SELECTED.maxY;
     SELECTED.value = (position.y - minY) / (maxY - minY);
     return;
   }
@@ -341,7 +356,7 @@ function onSwitchMouseDown( event ) {
 
     var intersects = raycaster.intersectObject( plane );
     offset.copy( intersects[ 0 ].point ).sub( plane.position );
-    offset.y -= minY;
+    offset.y -= SELECTED.minY;
 
     container.style.cursor = 'move';
 
