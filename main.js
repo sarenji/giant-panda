@@ -321,7 +321,6 @@ function onSwitchMouseMove(event) {
   raycaster = getRaycaster();
   intersects = raycaster.intersectObject( plane );
   newPoint = intersects[ 0 ].point;
-  $("#debug").text("x: " + newPoint.x + " y: " + newPoint.y);
 
   if ( SELECTED ) {
     var position = newPoint.sub(offset);
